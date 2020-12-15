@@ -24,22 +24,20 @@
     "homepage": "https://github.com/jschaefer-io/ts-boiler#readme",
     "devDependencies": {
         "browser-sync": "^2.26.7",
-        "browser-sync-webpack-plugin": "^2.0.1",
+        "browser-sync-webpack-plugin": "^2.0.1"
+    },
+    "dependencies": {
+        "pixi.js": "^5.3.4",
+        "webpack-spritesmith": "^1.1.0",
         "cross-env": "^6.0.3",
         "laravel-mix": "^5.0.0",
         "pixelsmith": "^2.4.1",
         "raw-loader": "^4.0.1",
         "resolve-url-loader": "^3.1.0",
-        "sass": "^1.30.0",
-        "sass-loader": "^8.0.2",
         "spritesmith-cli": "^1.1.2",
         "ts-loader": "^6.2.1",
         "tslint": "^6.1.1",
         "tslint-ionic-rules": "^0.0.21",
         "typescript": "^3.8.3"
-    },
-    "dependencies": {
-        "pixi.js": "^5.3.4",
-        "webpack-spritesmith": "^1.1.0"
     }
 }

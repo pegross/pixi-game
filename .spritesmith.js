@@ -3,7 +3,7 @@
 module.exports = {
     src: './resources/img/sprites/tiles/**/*.{png,gif,jpg}',
     destImage: './resources/generated/sprites/tiles.png',
-    destCSS: './resources/generated/tiles.json',
+    destCSS: './resources/generated/sprites/tiles.json',
     cssName: 'tiles.json',
     cssFormat: 'json',
     imgPath: '../img/tiles.png',
