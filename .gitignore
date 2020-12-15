@@ -1,0 +1,9 @@
+dist
+out
+node_modules
+.idea
+test.html
+.DS_Store
+
+public/assets
+resources/generated
