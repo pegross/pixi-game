@@ -1,6 +1,7 @@
-###Setup
-####Build the sprites  
+Setup
+
+- Build the sprites  
 ```npm run sprites```
 
-####Start the watcher  
+- Start the watcher  
 ```npm run watch```
