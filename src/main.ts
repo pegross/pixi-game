@@ -1,23 +1,27 @@
 import * as PIXI from 'pixi.js';
-import TilingSprite = PIXI.TilingSprite;
 import Sprite = PIXI.Sprite;
 
 
-PIXI.Loader.shared.add('assets/sprites/tiles.json')
-    .load(setup);
+const app = new PIXI.Application({ width: 256, height: 256 });
+document.body.appendChild(app.view);
+
+app.loader
+    .add('tiles', 'assets/sprites/tiles.json')
+    .load((loader, resources) => {
+        const sprite = new Sprite(resources['grass-bright-1']);
+        app.stage.addChild(sprite);
+
+    });
 
 
 function setup() {
-    const app = new PIXI.Application({ width: 256, height: 256 });
-    const sheet = PIXI.Loader.shared.resources['assets/sprites/tiles.json'].data;
+    const sheet = app.loader.resources['assets/sprites/tiles.json'];
 
+    console.log(sheet);
     if (!sheet) {
         throw new Error(('Sheet undefined'));
     }
 
-    const sprite = new Sprite(sheet['grass-bright-1']);
-
     app.stage.addChild(sprite);
-    document.body.appendChild(app.view);
 }
 
