@@ -1,6 +1,7 @@
 const mix = require('laravel-mix');
 
 mix.ts('src/main.ts', 'public/assets/js/');
+mix.copy('resources/generated/sprites', 'public/assets/sprites');
 
 mix.browserSync({
     proxy: false,

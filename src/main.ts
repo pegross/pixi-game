@@ -1,10 +1,23 @@
 import * as PIXI from 'pixi.js';
+import TilingSprite = PIXI.TilingSprite;
+import Sprite = PIXI.Sprite;
 
-// The application will create a renderer using WebGL, if possible,
-// with a fallback to a canvas render. It will also setup the ticker
-// and the root stage PIXI.Container
-const app = new PIXI.Application({ width: 256, height: 256 });
 
-// The application will create a canvas element for you that you
-// can then insert into the DOM
-document.body.appendChild(app.view);
+PIXI.Loader.shared.add('assets/sprites/tiles.json')
+    .load(setup);
+
+
+function setup() {
+    const app = new PIXI.Application({ width: 256, height: 256 });
+    const sheet = PIXI.Loader.shared.resources['assets/sprites/tiles.json'].data;
+
+    if (!sheet) {
+        throw new Error(('Sheet undefined'));
+    }
+
+    const sprite = new Sprite(sheet['grass-bright-1']);
+
+    app.stage.addChild(sprite);
+    document.body.appendChild(app.view);
+}
+
