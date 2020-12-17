@@ -26,6 +26,19 @@ module.exports = [
         algorithm: 'top-down',
         algorithmOpts: {sort: false},
         engine: 'pixelsmith',
+    },
+    {
+        src: './resources/img/sprites/cinematic/**/*.{png,gif,jpg}',
+        destImage: './resources/generated/sprites/cinematic.png',
+        destCSS: './resources/generated/sprites/cinematic.json',
+        cssName: 'cinematic.json',
+        cssFormat: 'json',
+        cssTemplate: require('spritesmith-texturepacker'),
+        imgPath: '../sprites/cinematic.png',
+        padding: 2,
+        algorithm: 'top-down',
+        algorithmOpts: {sort: false},
+        engine: 'pixelsmith',
     }
 ];
 

@@ -1,6 +1,6 @@
 const mix = require('laravel-mix');
 
-mix.ts('src/main.ts', 'public/assets/js/');
+mix.ts('src/main.ts', 'public/assets/js/').sourceMaps();
 mix.copy('resources/generated/sprites', 'public/assets/sprites');
 
 mix.browserSync({
