@@ -20,15 +20,15 @@ export default class Game
 
     private constructor()
     {
-        this.app = new PIXI.Application({ width: Game.tileSize * 10 + 500, height: Game.tileSize * 10 + 500 });
+        this.app = new PIXI.Application({ width: Game.tileSize * 20, height: Game.tileSize * 20 });
         document.body.appendChild(this.app.view);
 
         // create viewport
         this.viewport = new Viewport({
-            screenWidth: window.innerWidth,
-            screenHeight: window.innerHeight,
-            worldWidth: 1000,
-            worldHeight: 1000,
+            screenWidth: Game.tileSize * 20,
+            screenHeight: Game.tileSize * 20,
+            worldWidth: Game.tileSize * 20,
+            worldHeight: Game.tileSize * 20,
             interaction: this.app.renderer.plugins.interaction,
         });
 
@@ -62,7 +62,7 @@ export default class Game
         }
         this.loadResources()
             .then(() => {
-                this.addBackground();
+                // this.addBackground();
                 this.generateWorld();
 
             })
@@ -99,7 +99,7 @@ export default class Game
     {
         return new Promise(resolve => {
 
-            const texture = this.texture('cinematic', 'background');
+            const texture = this.texture('tiles', 'stone-brick');
             const background = new PIXI.Container();
 
             for (let x = 0; x * texture.width <= this.app.screen.width; x++) {

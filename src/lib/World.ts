@@ -11,8 +11,8 @@ export default class World extends PIXI.Container
 
         const texture = Game.get().texture('tiles', 'grass-medium');
 
-        for (let x = 0; x < 10; x++) {
-            for (let y = 0; y < 10; y++) {
+        for (let x = 0; x < 20; x++) {
+            for (let y = 0; y < 20; y++) {
                 const sprite = new Sprite(texture);
                 sprite.x = x * Game.tileSize;
                 sprite.y = y * Game.tileSize;
@@ -33,11 +33,10 @@ export default class World extends PIXI.Container
 
         const playerTexture = Game.get().texture('tiles', 'wood-plank');
         const player = new Sprite(playerTexture);
-        player.x = 0;
-        player.y = 0;
+        player.x = Game.tileSize * 10;
+        player.y = Game.tileSize * 10;
         this.addChild(player);
-        // const viewport = Game.get().viewport;
-        // viewport.follow(player);
+        Game.get().viewport.follow(player);
 
         document.addEventListener('keydown', (event: KeyboardEvent) => {
             let modY = 0;
@@ -56,11 +55,11 @@ export default class World extends PIXI.Container
                 modX = Game.tileSize;
             }
 
-            if (player.x + modX >= 0 && player.x + modX < 10 * Game.tileSize) {
+            if (player.x + modX >= 0 && player.x + modX < 20 * Game.tileSize) {
                 player.x += modX;
             }
 
-            if (player.y + modY >= 0 && player.y + modY < 10 * Game.tileSize) {
+            if (player.y + modY >= 0 && player.y + modY < 20 * Game.tileSize) {
                 player.y += modY;
             }
         });
