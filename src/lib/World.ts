@@ -10,10 +10,13 @@ export default class World extends PIXI.Container
     widthTl: number;
     heightTl: number;
 
+    start: Point;
+
     constructor(widthInTiles: number, heightInTiles: number)
     {
         super();
 
+        this.start = new Point(2, 2);
         this.widthTl = widthInTiles;
         this.heightTl = heightInTiles;
 

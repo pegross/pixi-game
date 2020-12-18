@@ -76,6 +76,7 @@ export default class Game
             .then(([world, player]) => {
 
                 world.addPlayer(player);
+                player.setTile(world.start.x, world.start.y);
 
                 // add viewport last so it's in the foreground
                 this.app.stage.addChild(this.viewport);
@@ -141,7 +142,7 @@ export default class Game
     async generatePlayer(): Promise<Player>
     {
         return new Promise(resolve => {
-            const player = new Player(10, 10, 'hunter');
+            const player = new Player(0, 0, 'hunter');
             Game.get().viewport.follow(player);
             this.viewport.addChild(player);
             resolve(player);
