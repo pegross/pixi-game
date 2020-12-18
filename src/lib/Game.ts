@@ -4,6 +4,7 @@ import Sprite = PIXI.Sprite;
 import InvalidResourceError from './Errors/InvalidResourceError';
 import InvalidTextureError from './Errors/InvalidTextureError';
 import { Viewport } from 'pixi-viewport';
+import Point = PIXI.Point;
 
 export default class Game
 {
@@ -17,18 +18,21 @@ export default class Game
 
     static instance?: Game;
     static tileSize = 32;
+    static renderBox = 15;
+    static renderWidth = Game.tileSize * Game.renderBox;
+    static renderHeight = Game.tileSize * Game.renderBox;
 
     private constructor()
     {
-        this.app = new PIXI.Application({ width: Game.tileSize * 20, height: Game.tileSize * 20 });
+        this.app = new PIXI.Application({ width: Game.renderWidth, height: Game.renderHeight });
         document.body.appendChild(this.app.view);
 
         // create viewport
         this.viewport = new Viewport({
-            screenWidth: Game.tileSize * 20,
-            screenHeight: Game.tileSize * 20,
-            worldWidth: Game.tileSize * 20,
-            worldHeight: Game.tileSize * 20,
+            screenWidth: Game.renderWidth,
+            screenHeight: Game.renderHeight,
+            worldWidth: Game.renderWidth,
+            worldHeight: Game.renderHeight,
             interaction: this.app.renderer.plugins.interaction,
         });
 
@@ -69,6 +73,7 @@ export default class Game
             .then(() => {
                 // add viewport last so it's in the foreground
                 this.app.stage.addChild(this.viewport);
+                this.viewport.scale = new Point(1.75, 1.75);
             });
     }
 
@@ -88,6 +93,7 @@ export default class Game
                 .add('tiles', 'assets/sprites/tiles.json')
                 .add('cinematic', 'assets/sprites/cinematic.json')
                 .add('furniture', 'assets/sprites/furniture.json')
+                .add('hunter', 'assets/sprites/hunter.json')
                 .load((loader, resources) => {
                     this.resources = resources;
                     resolve();
@@ -120,15 +126,8 @@ export default class Game
     async generateWorld(): Promise<void>
     {
         return new Promise(resolve => {
-
-            const world = new World();
+            const world = new World(10, 10);
             this.viewport.addChild(world);
-
-            world.x = this.app.screen.width / 2;
-            world.y = this.app.screen.height / 2;
-            world.pivot.x = world.width / 2;
-            world.pivot.y = world.height / 2;
-
             resolve();
         });
     }

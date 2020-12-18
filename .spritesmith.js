@@ -39,6 +39,19 @@ module.exports = [
         algorithm: 'top-down',
         algorithmOpts: {sort: false},
         engine: 'pixelsmith',
+    },
+    {
+        src: './resources/img/sprites/characters/hunter/**/*.{png,gif,jpg}',
+        destImage: './resources/generated/sprites/hunter.png',
+        destCSS: './resources/generated/sprites/hunter.json',
+        cssName: 'hunter.json',
+        cssFormat: 'json',
+        cssTemplate: require('spritesmith-texturepacker'),
+        imgPath: '../sprites/hunter.png',
+        padding: 2,
+        algorithm: 'top-down',
+        algorithmOpts: {sort: false},
+        engine: 'pixelsmith',
     }
 ];
 
