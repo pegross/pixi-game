@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import Game from './Game';
 import Sprite = PIXI.Sprite;
 import Point = PIXI.Point;
+import Player from './Player';
 
 export default class World extends PIXI.Container
 {
@@ -38,15 +39,10 @@ export default class World extends PIXI.Container
                 this.addChild(sprite);
             }
         }
+    }
 
-        const playerTexture = Game.get().texture('hunter', 'right-1');
-        const player = new Sprite(playerTexture);
-        player.x = Game.tileSize * 5;
-        player.y = Game.tileSize * 5;
-        player.anchor = new Point(0.5, 0.5);
-        this.addChild(player);
-        Game.get().viewport.follow(player);
-
+    addPlayer(player: Player)
+    {
         document.addEventListener('keydown', (event: KeyboardEvent) => {
             let modY = 0;
             let modX = 0;
@@ -72,8 +68,6 @@ export default class World extends PIXI.Container
                 player.y += modY;
             }
         });
-
-
     }
 
 }

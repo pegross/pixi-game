@@ -5,6 +5,7 @@ import InvalidResourceError from './Errors/InvalidResourceError';
 import InvalidTextureError from './Errors/InvalidTextureError';
 import { Viewport } from 'pixi-viewport';
 import Point = PIXI.Point;
+import Player from './Player';
 
 export default class Game
 {
@@ -64,13 +65,18 @@ export default class Game
         if (this.running) {
             return;
         }
+
         this.loadResources()
             .then(() => {
-                // this.addBackground();
-                this.generateWorld();
+                const world = this.generateWorld();
+                const player = this.generatePlayer();
 
+                return Promise.all([world, player]);
             })
-            .then(() => {
+            .then(([world, player]) => {
+
+                world.addPlayer(player);
+
                 // add viewport last so it's in the foreground
                 this.app.stage.addChild(this.viewport);
                 this.viewport.scale = new Point(1.75, 1.75);
@@ -123,12 +129,22 @@ export default class Game
         });
     }
 
-    async generateWorld(): Promise<void>
+    async generateWorld(): Promise<World>
     {
         return new Promise(resolve => {
             const world = new World(10, 10);
             this.viewport.addChild(world);
-            resolve();
+            resolve(world);
+        });
+    }
+
+    async generatePlayer(): Promise<Player>
+    {
+        return new Promise(resolve => {
+            const player = new Player(10, 10, 'hunter');
+            Game.get().viewport.follow(player);
+            this.viewport.addChild(player);
+            resolve(player);
         });
     }
 
