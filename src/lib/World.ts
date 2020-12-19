@@ -7,8 +7,8 @@ import Player from './Player';
 export default class World extends PIXI.Container
 {
 
-    widthTl: number;
-    heightTl: number;
+    widthTiles: number;
+    heightTiles: number;
 
     start: Point;
 
@@ -17,13 +17,13 @@ export default class World extends PIXI.Container
         super();
 
         this.start = new Point(2, 2);
-        this.widthTl = widthInTiles;
-        this.heightTl = heightInTiles;
+        this.widthTiles = widthInTiles;
+        this.heightTiles = heightInTiles;
 
         const texture = Game.get().texture('tiles', 'grass-dark-1');
 
-        for (let x = 0; x < this.heightTl; x++) {
-            for (let y = 0; y < this.widthTl; y++) {
+        for (let x = 0; x < this.heightTiles; x++) {
+            for (let y = 0; y < this.widthTiles; y++) {
                 const sprite = new Sprite(texture);
                 sprite.x = x * Game.tileSize;
                 sprite.y = y * Game.tileSize;
@@ -51,24 +51,24 @@ export default class World extends PIXI.Container
             let modX = 0;
 
             if (event.key === 'w') {
-                modY = -Game.tileSize;
+                modY = -1;
             }
             if (event.key === 's') {
-                modY = Game.tileSize;
+                modY = 1;
             }
             if (event.key === 'a') {
-                modX = -Game.tileSize;
+                modX = -1;
             }
             if (event.key === 'd') {
-                modX = Game.tileSize;
+                modX = 1;
             }
 
-            if (player.x + modX >= 0 && player.x + modX < this.width) {
-                player.x += modX;
-            }
-
-            if (player.y + modY >= 0 && player.y + modY < this.height) {
-                player.y += modY;
+            // check boundaries and move
+            if (player.tileX + modX >= 0
+                && player.tileX + modX < this.widthTiles
+                && player.tileY + modY >= 0
+                && player.tileY + modY < this.heightTiles) {
+                player.moveTo(player.tileX + modX, player.tileY + modY);
             }
         });
     }

@@ -60,6 +60,22 @@ export default class Game
         return sheet.textures[textureName];
     }
 
+
+    animations(sheetName: string, animationName: string): PIXI.Texture[]
+    {
+        if (!this.resources) {
+            throw new InvalidResourceError(sheetName);
+        }
+
+        const sheet = this.resources[sheetName];
+
+        if (!sheet || !sheet.spritesheet || !sheet.spritesheet.animations) {
+            throw new InvalidResourceError(sheetName);
+        }
+
+        return sheet.spritesheet.animations[animationName];
+    }
+
     start()
     {
         if (this.running) {
@@ -76,7 +92,7 @@ export default class Game
             .then(([world, player]) => {
 
                 world.addPlayer(player);
-                player.setTile(world.start.x, world.start.y);
+                player.moveTo(world.start.x, world.start.y);
 
                 // add viewport last so it's in the foreground
                 this.app.stage.addChild(this.viewport);
@@ -143,8 +159,8 @@ export default class Game
     {
         return new Promise(resolve => {
             const player = new Player(0, 0, 'hunter');
-            Game.get().viewport.follow(player);
-            this.viewport.addChild(player);
+            Game.get().viewport.follow(player.sprite);
+            this.viewport.addChild(player.sprite);
             resolve(player);
         });
     }
