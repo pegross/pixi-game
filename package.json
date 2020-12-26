@@ -24,7 +24,8 @@
     "homepage": "https://github.com/jschaefer-io/ts-boiler#readme",
     "devDependencies": {
         "browser-sync": "^2.26.7",
-        "browser-sync-webpack-plugin": "^2.0.1"
+        "browser-sync-webpack-plugin": "^2.0.1",
+        "spritesmith-texturepacker": "^1.1.0"
     },
     "dependencies": {
         "cross-env": "^6.0.3",
@@ -35,7 +36,6 @@
         "raw-loader": "^4.0.1",
         "resolve-url-loader": "^3.1.2",
         "spritesmith-cli": "^1.1.2",
-        "spritesmith-texturepacker": "git+ssh://git@github.com/pegross/spritesmith-texturepacker-animations.git",
         "ts-loader": "^6.2.1",
         "tslint": "^6.1.1",
         "tslint-ionic-rules": "^0.0.21",

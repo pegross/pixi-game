@@ -6,22 +6,36 @@ import InvalidTextureError from './Errors/InvalidTextureError';
 import { Viewport } from 'pixi-viewport';
 import Point = PIXI.Point;
 import Player from './Player';
+import Ticker = PIXI.Ticker;
+import DisplayObject = PIXI.DisplayObject;
+import Creature from './Creature';
+import autoDetectRenderer = PIXI.autoDetectRenderer;
 
 export default class Game
 {
+    static instance?: Game;
+    static tileSize = 32;
+    static renderBox = 15;
+    static renderWidth = Game.tileSize * Game.renderBox;
+    static renderHeight = Game.tileSize * Game.renderBox;
+
+    private renderCount = 0;
+    private updateCount = 0;
 
     app: PIXI.Application;
     loader: PIXI.Loader;
     resources?: Partial<Record<string, PIXI.LoaderResource>>;
     viewport: Viewport;
 
-    private running = false;
+    private tickLastUpdate = 0;
+    private tickLastRender = 0;
 
-    static instance?: Game;
-    static tileSize = 32;
-    static renderBox = 15;
-    static renderWidth = Game.tileSize * Game.renderBox;
-    static renderHeight = Game.tileSize * Game.renderBox;
+    private creatures: Creature[] = [];
+    private player?: Player;
+    private world?: World;
+
+    private running = false;
+    private processing = false;
 
     private constructor()
     {
@@ -38,7 +52,6 @@ export default class Game
         });
 
         this.loader = new PIXI.Loader();
-
     }
 
     texture(sheetName: string, textureName: string): PIXI.Texture
@@ -76,7 +89,7 @@ export default class Game
         return sheet.spritesheet.animations[animationName];
     }
 
-    start()
+    initialize()
     {
         if (this.running) {
             return;
@@ -84,20 +97,74 @@ export default class Game
 
         this.loadResources()
             .then(() => {
-                const world = this.generateWorld();
-                const player = this.generatePlayer();
+                const worldPromise = this.generateWorld();
+                const playerPromise = this.generatePlayer();
 
-                return Promise.all([world, player]);
+                return Promise.all([worldPromise, playerPromise]);
             })
             .then(([world, player]) => {
+                this.world = world;
+                this.player = player;
 
-                world.addPlayer(player);
-                player.moveTo(world.start.x, world.start.y);
+                this.running = true;
+                this.player.moveTo(world.startTile.x, world.startTile.y);
 
                 // add viewport last so it's in the foreground
                 this.app.stage.addChild(this.viewport);
                 this.viewport.scale = new Point(1.75, 1.75);
+
+                this.app.ticker.add(() => {
+                    const time = Date.now();
+                    if (time - this.tickLastUpdate >= 1000) {
+                        this.processTurn();
+                    }
+
+                    if (time - this.tickLastRender >= 1000 / this.app.ticker.maxFPS) {
+                        this.render();
+                    }
+                });
             });
+    }
+
+    processTurn(): void
+    {
+        console.log({
+            'processTurn called': {
+                'this': this,
+                'player': this.player,
+                'action': this.player.action ?? undefined,
+                'isProcessing': this.processing,
+            },
+        });
+
+        if (!this.player || !this.player.action) {
+            return;
+        }
+
+        if (this.processing) {
+            return;
+        }
+
+        this.tickLastUpdate = Date.now();
+        this.processing = true;
+
+        console.log('processing', this.processing);
+
+        this.player.takeTurn().then(() => {
+            const creatureTurns: Promise<void>[] = [];
+            this.creatures.forEach((creature: Creature) => {
+                creatureTurns.push(creature.takeTurn());
+            });
+
+            Promise.all(creatureTurns).then(() => {
+                this.processing = false;
+                console.log('processing', this.processing);
+            })
+        });
+    }
+
+    render()
+    {
     }
 
     static get(): Game
@@ -107,7 +174,6 @@ export default class Game
         }
         return Game.instance;
     }
-
 
     async loadResources(): Promise<void>
     {
@@ -121,28 +187,6 @@ export default class Game
                     this.resources = resources;
                     resolve();
                 });
-        });
-    }
-
-    async addBackground(): Promise<void>
-    {
-        return new Promise(resolve => {
-
-            const texture = this.texture('tiles', 'stone-brick');
-            const background = new PIXI.Container();
-
-            for (let x = 0; x * texture.width <= this.app.screen.width; x++) {
-                for (let y = 0; y * texture.height <= this.app.screen.height; y++) {
-                    const sprite = new Sprite(texture);
-                    background.addChild(sprite);
-                    sprite.x = x * texture.width;
-                    sprite.y = y * texture.height;
-                }
-            }
-
-            this.app.stage.addChild(background);
-            background.width = this.app.screen.width;
-            background.height = this.app.screen.height;
         });
     }
 

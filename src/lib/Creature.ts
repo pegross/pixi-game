@@ -29,6 +29,18 @@ export default class Creature
         this.tileY = 0;
 
         this.moveTo(startTileX, startTileY);
+        this.registerEvents();
+    }
+
+    registerEvents()
+    {
+        return;
+    };
+
+    takeTurn(): Promise<void> {
+        return new Promise(resolve => {
+            resolve();
+        });
     }
 
     getDirectionAnimationName(): string
@@ -44,7 +56,7 @@ export default class Creature
     {
         this.sprite.textures = Game.get().animations(this.animationSheet, animationName);
         this.sprite.anchor = new Point(0.5, 0.5);
-        this.sprite.animationSpeed = 0.2;
+        this.sprite.animationSpeed = 0.1;
         this.sprite.loop = true;
         this.sprite.play();
     }
@@ -71,8 +83,42 @@ export default class Creature
         this.playAnimation(this.getDirectionAnimationName());
         this.tileX = tileX;
         this.tileY = tileY;
-        this.sprite.x = tileX * Game.tileSize;
-        this.sprite.y = tileY * Game.tileSize;
+
         console.log(tileX, tileY);
+    }
+
+    render() {
+        this.sprite.x = this.tileX * Game.tileSize;
+        this.sprite.y = this.tileY * Game.tileSize;
+    }
+
+    moveX(tileX: number): void
+    {
+        return this.moveTo(tileX, this.tileY);
+    }
+
+    moveY(tileY: number): void
+    {
+        return this.moveTo(this.tileX, tileY);
+    }
+
+    moveLeft(tiles = 1): void
+    {
+        return this.moveX(this.tileX - tiles);
+    }
+
+    moveRight(tiles = 1): void
+    {
+        return this.moveX(this.tileX + tiles);
+    }
+
+    moveUp(tiles = 1): void
+    {
+        return this.moveY(this.tileY - tiles);
+    }
+
+    moveDown(tiles = 1): void
+    {
+        return this.moveY(this.tileY + tiles);
     }
 }

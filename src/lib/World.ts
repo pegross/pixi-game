@@ -10,13 +10,13 @@ export default class World extends PIXI.Container
     widthTiles: number;
     heightTiles: number;
 
-    start: Point;
+    startTile: Point;
 
     constructor(widthInTiles: number, heightInTiles: number)
     {
         super();
 
-        this.start = new Point(2, 2);
+        this.startTile = new Point(2, 2);
         this.widthTiles = widthInTiles;
         this.heightTiles = heightInTiles;
 
@@ -42,35 +42,6 @@ export default class World extends PIXI.Container
                 this.addChild(sprite);
             }
         }
-    }
-
-    addPlayer(player: Player)
-    {
-        document.addEventListener('keydown', (event: KeyboardEvent) => {
-            let modY = 0;
-            let modX = 0;
-
-            if (event.key === 'w') {
-                modY = -1;
-            }
-            if (event.key === 's') {
-                modY = 1;
-            }
-            if (event.key === 'a') {
-                modX = -1;
-            }
-            if (event.key === 'd') {
-                modX = 1;
-            }
-
-            // check boundaries and move
-            if (player.tileX + modX >= 0
-                && player.tileX + modX < this.widthTiles
-                && player.tileY + modY >= 0
-                && player.tileY + modY < this.heightTiles) {
-                player.moveTo(player.tileX + modX, player.tileY + modY);
-            }
-        });
     }
 
 }
