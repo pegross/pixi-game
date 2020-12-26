@@ -8,5 +8,11 @@
     },
     "files": [
         "src/main.ts"
+    ],
+    "typeRoots": [
+        "./node_modules/phaser/types"
+    ],
+    "types": [
+        "Phaser"
     ]
 }

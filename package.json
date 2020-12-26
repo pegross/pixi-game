@@ -30,9 +30,8 @@
     "dependencies": {
         "cross-env": "^6.0.3",
         "laravel-mix": "^5.0.0",
+        "phaser": "^3.50.0",
         "pixelsmith": "^2.4.1",
-        "pixi-viewport": "^4.18.1",
-        "pixi.js": "^5.3.5",
         "raw-loader": "^4.0.1",
         "resolve-url-loader": "^3.1.2",
         "spritesmith-cli": "^1.1.2",
