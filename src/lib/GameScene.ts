@@ -1,106 +1,115 @@
 import 'phaser';
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 import Text = Phaser.GameObjects.Text;
-import Sprite = Phaser.GameObjects.Sprite;
+import GameMap from './GameMap';
+import Player from './Player';
+import Tile from './Tile';
 
 export class GameScene extends Phaser.Scene
 {
 
+
+    timeElapsed = 0;
     delta = 1000;
-    lastStarTime = 0;
-    starsCaught = 0;
-    starsFallen = 0;
+
+    map?: GameMap;
+    player?: Player;
     sand?: StaticGroup;
     info?: Text;
 
-    constructor() {
+    constructor()
+    {
         super({
             key: 'GameScene',
         });
     }
 
-    init(): void {
+    init(): void
+    {
+        this.timeElapsed = 0;
         this.delta = 1000;
-        this.lastStarTime = 0;
-        this.starsCaught = 0;
-        this.starsFallen = 0;
     }
 
-    preload(): void {
-        this.load.setBaseURL(
-            'https://raw.githubusercontent.com/mariyadavydova/' +
-            'starfall-phaser3-typescript/master/');
-        this.load.image('star', 'assets/star.png');
-        this.load.image('sand', 'assets/sand.jpg');
+    preload(): void
+    {
+        this.load.atlas('tiles', 'assets/sprites/tiles.png', 'assets/sprites/tiles.json');
+        this.load.atlas('hunter', 'assets/sprites/hunter.png', 'assets/sprites/hunter.json');
+        this.map = new GameMap(7, 7, this);
+        this.player = new Player(this.map, 5, 5);
     }
 
-    create(): void {
-        this.sand = this.physics.add.staticGroup({
-            key: 'sand',
-            frameQuantity: 20,
-        });
-        Phaser.Actions.PlaceOnLine(this.sand.getChildren(),
-            new Phaser.Geom.Line(20, 580, 820, 580));
-        this.sand.refresh();
-        this.info = this.add.text(10, 10, '10 fallen', { font: '24px Arial Bold', color: '#FBFBAC' });
-    }
 
-    update(time: number): void {
-        const diff: number = time - this.lastStarTime;
-        if (diff > this.delta) {
-            this.lastStarTime = time;
-            if (this.delta > 500) {
-                this.delta -= 20;
-            }
-            this.emitStar();
-        }
-
-        if (this.info) {
-            this.info.text =
-                this.starsCaught + ' caught - ' +
-                this.starsFallen + ' fallen (max 3)';
+    create(): void
+    {
+        if (this.player) {
+            this.player.listenScene(this);
         }
     }
 
-    private onClick(starImg: Phaser.Physics.Arcade.Image): () => void {
-        return () => {
-            starImg.setTint(0x00ff00);
-            starImg.setVelocity(0, 0);
-            this.starsCaught += 1;
-            this.time.delayedCall(100, (star: Sprite) => {
-                star.destroy();
-            }, [starImg], this);
-        };
-    }
+    update(time: number): void
+    {
+        this.timeElapsed = time;
 
-    private onFall(starImg: Phaser.Physics.Arcade.Image): () => void {
-        return () => {
-            starImg.setTint(0xff0000);
-            this.starsFallen += 1;
-            this.time.delayedCall(100, (star: Sprite) => {
-                star.destroy();
+        if(this.map) {
 
-                if (this.starsFallen > 2) {
-                    this.scene.start('ScoreScene', {
-                        starsCaught: this.starsCaught,
-                    });
+            this.map.getTiles().forEach((tile: Tile) => {
+                tile.render();
+            });
+
+            if (this.player) {
+                this.player.render(this.map);
+
+                if (this.player.action) {
+                    this.player.doAction();
                 }
-            }, [starImg], this);
-        };
-    }
-
-    private emitStar(): void {
-        const x = Phaser.Math.Between(25, 775);
-        const y = 26;
-        const star = this.physics.add.image(x, y, 'star');
-        star.setDisplaySize(50, 50);
-        star.setVelocity(0, 200);
-        star.setInteractive();
-        star.on('pointerdown', this.onClick(star), this);
-        if (this.sand) {
-            this.physics.add.collider(star, this.sand,
-                this.onFall(star), undefined, this);
-
+            }
         }
+
+        // if (this.timeElapsed / 1000 > 30) {
+        //     this.scene.start('ScoreScene', {
+        //         timeElapsed: this.timeElapsed,
+        //     });
+        // }
     }
+
+    //
+    // private onClick(starImg: Phaser.Physics.Arcade.Image): () => void {
+    //     return () => {
+    //         starImg.setTint(0x00ff00);
+    //         starImg.setVelocity(0, 0);
+    //         this.time.delayedCall(100, (star: Sprite) => {
+    //             star.destroy();
+    //         }, [starImg], this);
+    //     };
+    // }
+    //
+    // private onFall(starImg: Phaser.Physics.Arcade.Image): () => void {
+    //     return () => {
+    //         starImg.setTint(0xff0000);
+    //         this.time.delayedCall(100, (star: Sprite) => {
+    //             star.destroy();
+    //
+    //             if (this.timeElapsed > 5) {
+    //                 this.scene.start('ScoreScene', {
+    //                     timeElapsed: this.timeElapsed,
+    //                 });
+    //             }
+    //         }, [starImg], this);
+    //     };
+    // }
+    //
+    // private emitStar(): void {
+    //     const x = Phaser.Math.Between(25, 775);
+    //     const y = 26;
+    //     const star = this.physics.add.image(x, y, 'star');
+    //     star.setDisplaySize(50, 50);
+    //     star.setVelocity(0, 200);
+    //     star.setInteractive();
+    //     star.on('pointerdown', this.onClick(star), this);
+    //     if (this.sand) {
+    //         this.physics.add.collider(star, this.sand,
+    //             this.onFall(star), undefined, this);
+    //
+    //     }
+    // }
 }

@@ -1,12 +1,9 @@
 import 'phaser';
-import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
-import Text = Phaser.GameObjects.Text;
-import Sprite = Phaser.GameObjects.Sprite;
 
 export class ScoreScene extends Phaser.Scene
 {
-    score: number = 0;
-    result?: Phaser.GameObjects.Text;
+    timeElapsed: number = 0;
+    title?: Phaser.GameObjects.Text;
     hint?: Phaser.GameObjects.Text;
 
     constructor() {
@@ -16,15 +13,16 @@ export class ScoreScene extends Phaser.Scene
     }
 
     init(params: any): void {
-        this.score = params.starsCaught;
+        this.timeElapsed = params.timeElapsed;
     }
 
     create(): void {
-        const resultText: string = 'Your score is ' + this.score + '!';
-        const hintText: string = 'Click to restart';
+        const titleText: string = 'Time elapsed: ' + this.timeElapsed;
 
-        this.result = this.add.text(200, 250, resultText,
-            { font: '48px Arial Bold', color: '#FBFBAC' });
+        this.title = this.add.text(200, 250, titleText,
+            { font: '32px Arial Bold', color: '#FFF000' });
+
+        const hintText: string = 'Click to restart';
 
         this.hint = this.add.text(300, 350, hintText,
             { font: '24px Arial Bold', color: '#FBFBAC' });

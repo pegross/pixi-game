@@ -1,7 +1,4 @@
 import 'phaser';
-import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
-import Text = Phaser.GameObjects.Text;
-import Sprite = Phaser.GameObjects.Sprite;
 
 export class WelcomeScene extends Phaser.Scene
 {
@@ -15,12 +12,12 @@ export class WelcomeScene extends Phaser.Scene
     }
 
     create(): void {
-        const titleText: string = 'Starfall';
+        const titleText: string = 'Rogue it up';
 
         this.title = this.add.text(200, 250, titleText,
             { font: '48px Arial Bold', color: '#FBFBAC' });
 
-        const hintText = 'Click to start';
+        const hintText = 'Click to die';
 
         this.hint = this.add.text(300, 350, hintText, { font: '48px Arial Bold', color: '#FBFBAC'});
 
