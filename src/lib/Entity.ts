@@ -28,18 +28,17 @@ export default abstract class Entity
         this.y = y;
     }
 
-    render(map: GameMap)
+    render()
     {
         const pixelX = this.x * GameMap.TILE_SIZE;
         const pixelY = this.y * GameMap.TILE_SIZE;
 
         if (!this.sprite) {
-            this.sprite = map.scene.add.sprite(pixelX, pixelY, this.texture, this.frame);
+            this.sprite = this.map.scene.add.sprite(pixelX, pixelY, this.texture, this.frame);
             this.sprite.setScale(2);
             this.registerSpriteAnimations();
         } else {
-            // this.sprite.setFrame(this.frame);
-            const tween = this.map.scene.tweens.add({
+            this.map.scene.tweens.add({
                 targets: this.sprite,
                 x: pixelX,
                 y: pixelY,
@@ -69,7 +68,6 @@ export default abstract class Entity
             return;
         }
 
-        console.log(this.sprite.anims);
         this.sprite.anims.play(animation);
     }
 
@@ -99,7 +97,6 @@ export default abstract class Entity
 
     protected moveAllowed(x: number, y: number): boolean
     {
-        console.log(this.map.getTile(x, y));
         return (this.map.getTile(x, y) !== null);
     }
 

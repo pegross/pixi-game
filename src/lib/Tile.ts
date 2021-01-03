@@ -12,9 +12,4 @@ export default class Tile extends Entity
         super('tiles', frame, map, x, y);
         this.map = map;
     }
-
-    render()
-    {
-        super.render(this.map);
-    }
 }

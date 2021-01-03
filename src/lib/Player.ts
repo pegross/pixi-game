@@ -1,13 +1,11 @@
 import 'phaser';
 import GameMap from './GameMap';
-import Creature from './Creature';
+import Creature, { Action, ActionDirection, ActionType } from './Creature';
 import { GameScene } from './GameScene';
 import Scene = Phaser.Scene;
 
-type Action = 'moveLeft' | 'moveRight' | 'moveDown' | 'moveUp';
 export default class Player extends Creature
 {
-    action?: Action;
 
     constructor(map: GameMap, x: number, y: number)
     {
@@ -22,101 +20,35 @@ export default class Player extends Creature
                 return;
             }
         }
-        
-        switch (this.action) {
-            case 'moveDown':
-                this.moveDown();
-                break;
-            case 'moveLeft':
-                this.moveLeft();
-                break;
-            case 'moveRight':
-                this.moveRight();
-                break;
-            case 'moveUp':
-                this.moveUp();
-                break;
-        }
 
-        this.action = undefined;
-    }
-
-    protected move(x: number, y: number)
-    {
-        super.move(x, y);
-
-        if (this.sprite) {
-            if(this.directionY === 'up') {
-                this.sprite.anims.play('moveBack');
-            } else {
-                this.sprite.anims.play('move');
-            }
-        }
-    }
-
-    protected registerSpriteAnimations()
-    {
-        if (!this.sprite) {
-            throw new Error('Sprite is undefined');
-        }
-
-        const framesFront = this.sprite.anims.generateFrameNames('hunter', {
-            prefix: 'left_',
-            start: 1,
-            end: 3,
-            zeroPad: 2
-        });
-        framesFront.push(framesFront[0]);
-
-        this.sprite.anims.create({
-            key: 'move',
-            frames: framesFront,
-            duration: 250,
-        });
-
-        const framesBack = this.sprite.anims.generateFrameNames('hunter', {
-            prefix: 'back_left_',
-            start: 1,
-            end: 3,
-            zeroPad: 2
-        });
-        framesBack.push(framesBack[0]);
-
-        this.sprite.anims.create({
-            key: 'moveBack',
-            frames: framesBack,
-            duration: 250,
-        });
-    }
-
-    setAction(action: Action)
-    {
-        this.action = action;
+        super.doAction();
     }
 
     listenScene(scene: Scene)
     {
         const listen = (action: Action) => {
             this.setAction(action);
+            this.map.scene.nextTurn();
             console.log(action);
         };
 
         scene.input.keyboard.on('keydown-W', () => {
-            listen('moveUp');
+            listen({ type: 'move', direction: 'up' });
         });
 
         scene.input.keyboard.on('keydown-A', () => {
-            listen('moveLeft');
+            listen({ type: 'move', direction: 'left' });
         });
 
         scene.input.keyboard.on('keydown-S', () => {
-            listen('moveDown');
+            listen({ type: 'move', direction: 'down' });
         });
 
         scene.input.keyboard.on('keydown-D', () => {
-            listen('moveRight');
+            listen({ type: 'move', direction: 'right' });
         });
 
     }
+
 }
 

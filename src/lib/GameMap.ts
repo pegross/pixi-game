@@ -1,14 +1,15 @@
 import 'phaser';
 import Tile from './Tile';
+import { GameScene } from './GameScene';
 
 export default class GameMap
 {
     static TILE_SIZE: number = 64;
 
-    scene: Phaser.Scene;
+    scene: GameScene;
     private readonly tiles: Tile[][] = [];
 
-    constructor(width: number, height: number, scene: Phaser.Scene)
+    constructor(width: number, height: number, scene: GameScene)
     {
         this.scene = scene;
 

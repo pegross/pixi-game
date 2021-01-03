@@ -4,6 +4,7 @@ import Text = Phaser.GameObjects.Text;
 import GameMap from './GameMap';
 import Player from './Player';
 import Tile from './Tile';
+import Creature from './Creature';
 
 export class GameScene extends Phaser.Scene
 {
@@ -12,10 +13,10 @@ export class GameScene extends Phaser.Scene
     timeElapsed = 0;
     delta = 1000;
 
-    map?: GameMap;
+    creatures: Creature[] = [];
+
     player?: Player;
-    sand?: StaticGroup;
-    info?: Text;
+    map?: GameMap;
 
     constructor()
     {
@@ -36,6 +37,8 @@ export class GameScene extends Phaser.Scene
         this.load.atlas('hunter', 'assets/sprites/hunter.png', 'assets/sprites/hunter.json');
         this.map = new GameMap(7, 7, this);
         this.player = new Player(this.map, 5, 5);
+
+        this.creatures.push(new Creature('hunter', 'left_01', this.map, 3, 3));
     }
 
 
@@ -50,66 +53,33 @@ export class GameScene extends Phaser.Scene
     {
         this.timeElapsed = time;
 
-        if(this.map) {
+        if (this.map) {
 
             this.map.getTiles().forEach((tile: Tile) => {
                 tile.render();
             });
 
-            if (this.player) {
-                this.player.render(this.map);
+            this.creatures.forEach((creature: Creature) => {
+                creature.render();
+            });
 
+            if (this.player) {
+
+                this.player.render();
                 if (this.player.action) {
                     this.player.doAction();
                 }
+
             }
         }
-
-        // if (this.timeElapsed / 1000 > 30) {
-        //     this.scene.start('ScoreScene', {
-        //         timeElapsed: this.timeElapsed,
-        //     });
-        // }
     }
 
-    //
-    // private onClick(starImg: Phaser.Physics.Arcade.Image): () => void {
-    //     return () => {
-    //         starImg.setTint(0x00ff00);
-    //         starImg.setVelocity(0, 0);
-    //         this.time.delayedCall(100, (star: Sprite) => {
-    //             star.destroy();
-    //         }, [starImg], this);
-    //     };
-    // }
-    //
-    // private onFall(starImg: Phaser.Physics.Arcade.Image): () => void {
-    //     return () => {
-    //         starImg.setTint(0xff0000);
-    //         this.time.delayedCall(100, (star: Sprite) => {
-    //             star.destroy();
-    //
-    //             if (this.timeElapsed > 5) {
-    //                 this.scene.start('ScoreScene', {
-    //                     timeElapsed: this.timeElapsed,
-    //                 });
-    //             }
-    //         }, [starImg], this);
-    //     };
-    // }
-    //
-    // private emitStar(): void {
-    //     const x = Phaser.Math.Between(25, 775);
-    //     const y = 26;
-    //     const star = this.physics.add.image(x, y, 'star');
-    //     star.setDisplaySize(50, 50);
-    //     star.setVelocity(0, 200);
-    //     star.setInteractive();
-    //     star.on('pointerdown', this.onClick(star), this);
-    //     if (this.sand) {
-    //         this.physics.add.collider(star, this.sand,
-    //             this.onFall(star), undefined, this);
-    //
-    //     }
-    // }
+    nextTurn() {
+        this.creatures.forEach((creature: Creature) => {
+            creature.setRandomAction();
+            creature.doAction();
+        });
+    }
+
 }
+
