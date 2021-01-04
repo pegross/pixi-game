@@ -1,29 +1,61 @@
 import 'phaser';
-import Entity from './Entity';
-import GameMap from './GameMap';
+import WorldEntity from './WorldEntity';
+import World from './World';
+import Tile from './Tile';
+import HealthBar from './HealthBar';
 
 export type ActionDirection = 'up' | 'down' | 'left' | 'right';
-export type ActionType = 'move' | 'attack' | 'none';
+export type ActionType = 'move' | 'attack' | 'idle';
 export type Action = { type: ActionType, direction: ActionDirection }
 
-export default class Creature extends Entity
+export default class Creature extends WorldEntity
 {
 
-    private maxHealth = 10;
-    private health = this.maxHealth;
+    isDead = false;
+    maxHealth = 10;
+    health = this.maxHealth;
     private strength = 6;
-    private isDead = false;
+    private healthBar: HealthBar;
 
     action?: Action;
 
-    constructor(texture: string, frame: string, map: GameMap, x: number, y: number)
+    constructor(texture: string, frame: string, world: World)
     {
-        super(texture, frame, map, x, y);
+        super(texture, frame, world);
+        this.healthBar = new HealthBar(this);
+    }
 
-        if (!this.sprite) {
+    render()
+    {
+        if (this.isDead) {
             return;
         }
 
+        super.render();
+
+        if (!this.sprite) {
+            this.sprite = this.world.renderScene.add.sprite(this.currentRenderX, this.currentRenderY, this.texture, this.frame);
+            this.sprite.setScale(2);
+            this.registerSpriteAnimations();
+        } else {
+            this.world.renderScene.tweens.add({
+                targets: [this.sprite, this.healthBar],
+                x: this.currentRenderX,
+                y: this.currentRenderY,
+                ease: 'InOut',
+                duration: 100,
+            });
+        }
+
+        if (this.directionX === 'left') {
+            this.sprite.flipX = false;
+        }
+
+        if (this.directionX === 'right') {
+            this.sprite.flipX = true;
+        }
+
+        this.healthBar.render();
     }
 
     attack(target: Creature)
@@ -31,16 +63,17 @@ export default class Creature extends Entity
         target.takeDamage(this.strength);
     }
 
-    onDeath()
+    die()
     {
+        this.isDead = true;
+
+        this.currentTile.removeCreature();
+
         if (this.sprite) {
             this.sprite.destroy();
         }
-    }
 
-    moveDirection()
-    {
-
+        this.healthBar.remove();
     }
 
     takeDamage(damage: number)
@@ -55,7 +88,7 @@ export default class Creature extends Entity
 
     setRandomAction()
     {
-        const types: ActionType[] = ['move', 'none'];
+        const types: ActionType[] = ['move', 'idle'];
         const directions: ActionDirection[] = ['up', 'down', 'left', 'right'];
 
         this.setAction({
@@ -67,8 +100,9 @@ export default class Creature extends Entity
     private setHealth(health: number): void
     {
         this.health = health;
-        if (this.isDead) {
-            this.onDeath();
+
+        if (this.health <= 0) {
+            this.die();
         }
     }
 
@@ -80,6 +114,10 @@ export default class Creature extends Entity
 
     doAction()
     {
+        if (this.isDead) {
+            return;
+        }
+
         if (!this.action) {
             return;
         }
@@ -102,16 +140,71 @@ export default class Creature extends Entity
                 break;
             case 'attack':
                 return;
-            case 'none':
+            case 'idle':
+                this.idle();
                 return;
         }
 
         this.action = undefined;
     }
 
+    protected idle(): void
+    {
+    }
+
+    protected enterTile(targetTile: Tile)
+    {
+        if (!targetTile.creatureCanEnter()) {
+            throw new Error('Entering tile not allowed');
+        }
+
+        this.currentTile.creatureLeave(this);
+        this.currentTile = targetTile;
+        targetTile.creatureEnter(this);
+    }
+
+    moveDown()
+    {
+        this.directionY = 'down';
+        this.move(this.currentTile.getX(), this.currentTile.getY() + 1);
+    }
+
+    moveLeft()
+    {
+        this.directionX = 'left';
+        this.move(this.currentTile.getX() - 1, this.currentTile.getY());
+    }
+
+    moveRight()
+    {
+        this.directionX = 'right';
+        this.move(this.currentTile.getX() + 1, this.currentTile.getY());
+    }
+
+    moveUp()
+    {
+        this.directionY = 'up';
+        this.move(this.currentTile.getX(), this.currentTile.getY() - 1);
+    }
+
     protected move(x: number, y: number)
     {
-        super.move(x, y);
+        let targetTile;
+        try {
+            targetTile = this.world.getTile(x, y);
+        } catch {
+            return;
+        }
+
+        console.log(targetTile);
+
+        const creature = targetTile.getCreature();
+        if (creature) {
+            this.attack(creature);
+            return;
+        }
+
+        this.enterTile(targetTile);
 
         if (this.sprite) {
             if (this.directionY === 'up') {
@@ -159,4 +252,5 @@ export default class Creature extends Entity
             duration: 250,
         });
     }
+
 }

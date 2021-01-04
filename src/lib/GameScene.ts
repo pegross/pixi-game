@@ -1,10 +1,8 @@
 import 'phaser';
-import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
-import Text = Phaser.GameObjects.Text;
-import GameMap from './GameMap';
 import Player from './Player';
 import Tile from './Tile';
 import Creature from './Creature';
+import World from './World';
 
 export class GameScene extends Phaser.Scene
 {
@@ -16,7 +14,7 @@ export class GameScene extends Phaser.Scene
     creatures: Creature[] = [];
 
     player?: Player;
-    map?: GameMap;
+    world?: World;
 
     constructor()
     {
@@ -35,10 +33,15 @@ export class GameScene extends Phaser.Scene
     {
         this.load.atlas('tiles', 'assets/sprites/tiles.png', 'assets/sprites/tiles.json');
         this.load.atlas('hunter', 'assets/sprites/hunter.png', 'assets/sprites/hunter.json');
-        this.map = new GameMap(7, 7, this);
-        this.player = new Player(this.map, 5, 5);
+        this.load.atlas('priest', 'assets/sprites/priest.png', 'assets/sprites/priest.json');
 
-        this.creatures.push(new Creature('hunter', 'left_01', this.map, 3, 3));
+        this.world = new World(7, 7, this);
+        this.player = new Player(this.world);
+        this.player.setPosition(5,5);
+
+        const enemy = new Creature('priest', 'left_01', this.world);
+        enemy.setPosition(3,3);
+        this.creatures.push(enemy);
     }
 
 
@@ -53,13 +56,19 @@ export class GameScene extends Phaser.Scene
     {
         this.timeElapsed = time;
 
-        if (this.map) {
+        if (this.world) {
 
-            this.map.getTiles().forEach((tile: Tile) => {
+            this.world.getTilesFlat().forEach((tile: Tile) => {
                 tile.render();
             });
 
-            this.creatures.forEach((creature: Creature) => {
+            this.creatures.forEach((creature: Creature, index: number, object: Creature[]) => {
+                // remove dead creature from scene
+                if (creature.isDead) {
+                    object.splice(index, 1);
+                    return;
+                }
+
                 creature.render();
             });
 
@@ -74,7 +83,9 @@ export class GameScene extends Phaser.Scene
         }
     }
 
-    nextTurn() {
+    // TODO: having this on the scene seems weird... move to World
+    nextTurn()
+    {
         this.creatures.forEach((creature: Creature) => {
             creature.setRandomAction();
             creature.doAction();

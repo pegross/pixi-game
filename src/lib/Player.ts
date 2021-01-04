@@ -1,15 +1,14 @@
 import 'phaser';
-import GameMap from './GameMap';
 import Creature, { Action, ActionDirection, ActionType } from './Creature';
-import { GameScene } from './GameScene';
 import Scene = Phaser.Scene;
+import World from './World';
 
 export default class Player extends Creature
 {
 
-    constructor(map: GameMap, x: number, y: number)
+    constructor(world: World)
     {
-        super('hunter', 'right_01', map, x, y);
+        super('hunter', 'right_01', world);
     }
 
     doAction()
@@ -28,7 +27,7 @@ export default class Player extends Creature
     {
         const listen = (action: Action) => {
             this.setAction(action);
-            this.map.scene.nextTurn();
+            this.world.renderScene.nextTurn();
             console.log(action);
         };
 

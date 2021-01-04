@@ -52,6 +52,19 @@ module.exports = [
         algorithm: 'top-down',
         algorithmOpts: {sort: false},
         engine: 'pixelsmith',
+    },
+	{
+        src: './resources/img/sprites/characters/priest/**/*.{png,gif,jpg}',
+        destImage: './resources/generated/sprites/priest.png',
+        destCSS: './resources/generated/sprites/priest.json',
+        cssName: 'priest.json',
+        cssFormat: 'json',
+        cssTemplate: require('spritesmith-texturepacker'),
+        imgPath: '../sprites/priest.png',
+        padding: 1,
+        algorithm: 'top-down',
+        algorithmOpts: {sort: false},
+        engine: 'pixelsmith',
     }
 ];
 
