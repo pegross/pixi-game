@@ -35,13 +35,22 @@ export class GameScene extends Phaser.Scene
         this.load.atlas('hunter', 'assets/sprites/hunter.png', 'assets/sprites/hunter.json');
         this.load.atlas('priest', 'assets/sprites/priest.png', 'assets/sprites/priest.json');
 
-        this.world = new World(7, 7, this);
+        const worldWidth = 20;
+        const worldHeight = 20;
+        this.world = new World(worldWidth, worldHeight, this);
         this.player = new Player(this.world);
         this.player.setPosition(5,5);
 
-        const enemy = new Creature('priest', 'left_01', this.world);
-        enemy.setPosition(3,3);
-        this.creatures.push(enemy);
+        this.cameras.main.setBackgroundColor('#000');
+
+        const enemyCount = 20;
+        for(let i = 0; i < enemyCount; i++) {
+            const x = Math.floor(Math.random() * worldWidth);
+            const y = Math.floor(Math.random() * worldHeight);
+            const enemy = new Creature('priest', 'left_01', this.world);
+            enemy.setPosition(x, y);
+            this.creatures.push(enemy);
+        }
     }
 
 
@@ -73,12 +82,10 @@ export class GameScene extends Phaser.Scene
             });
 
             if (this.player) {
-
                 this.player.render();
                 if (this.player.action) {
                     this.player.doAction();
                 }
-
             }
         }
     }

@@ -215,7 +215,7 @@ export default class Creature extends WorldEntity
         }
     }
 
-    protected registerSpriteAnimations(hasBackAnimation = false)
+    protected registerSpriteAnimations(hasBackAnimation = true)
     {
         if (!this.sprite) {
             throw new Error('Sprite is undefined');

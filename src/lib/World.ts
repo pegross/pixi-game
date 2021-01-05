@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 
 export default class World
 {
-    static TILE_SIZE: number = 64;
+    static TILE_SIZE: number = 60;
 
     renderScene: GameScene;
 
@@ -15,9 +15,7 @@ export default class World
         this.renderScene = scene;
 
         const tiles: Tile[][] = [];
-        console.log('foo');
         for (let x = 0; x < width; x++) {
-            console.log('bar');
             tiles[x] = [];
 
             for (let y = 0; y < height; y++) {

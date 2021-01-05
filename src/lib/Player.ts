@@ -23,6 +23,14 @@ export default class Player extends Creature
         super.doAction();
     }
 
+    render()
+    {
+        super.render();
+        if (this.sprite) {
+            this.world.renderScene.cameras.main.startFollow(this.sprite);
+        }
+    }
+
     listenScene(scene: Scene)
     {
         const listen = (action: Action) => {
