@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 
 export default class World
 {
-    static TILE_SIZE: number = 60;
+    static TILE_SIZE: number = 64;
 
     renderScene: GameScene;
 
